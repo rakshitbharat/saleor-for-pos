@@ -60,3 +60,5 @@ GraphQL, Django, and ReactJS."                                                  
       org.opencontainers.image.licenses="BSD 3"
 
 CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "saleor.asgi.gunicorn_worker.UvicornWorker", "saleor.asgi:application"]
+
+RUN pip install gunicorn uvicorn
