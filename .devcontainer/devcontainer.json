@@ -3,17 +3,13 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "saleor",
   "workspaceFolder": "/app",
-  "forwardPorts": [
-    8000,
-    "dashboard:9000",
-    "mailpit:8025"
-  ],
+  "forwardPorts": [8000, "dashboard:9000", "mailpit:8025"],
   "portsAttributes": {
     "8000": {
-        "label": "Saleor Core"
+      "label": "Saleor Core"
     },
     "dashboard:9000": {
-        "label": "Saleor Dashboard"
+      "label": "Saleor Dashboard"
     },
     "mailpit:8025": {
       "label": "Mailpit UI"
@@ -23,14 +19,22 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "be5invis.toml",
-        "Cameron.vscode-pytest",
-        "charliermarsh.ruff",
-        "editorconfig.editorconfig",
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "streetsidesoftware.code-spell-checker"
-      ]
+        "ms-python.debugpy",
+        "charliermarsh.ruff",
+        "editorconfig.editorconfig"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.extraPaths": ["/app"],
+        "files.watcherExclude": {
+          "**/.git/objects/**": true,
+          "**/.git/subtree-cache/**": true,
+          "**/node_modules/**": true,
+          "**/__pycache__/**": true
+        }
+      }
     }
   }
 }

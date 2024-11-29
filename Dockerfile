@@ -48,17 +48,28 @@ ENV STATIC_URL=${STATIC_URL:-/static/}
 RUN SECRET_KEY=dummy STATIC_URL=${STATIC_URL} python3 manage.py collectstatic --no-input
 
 EXPOSE 8000
-ENV PYTHONUNBUFFERED=1
+# Environment variables for development
+ENV PYTHONUNBUFFERED=1 \
+    DJANGO_DEBUG=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DJANGO_SETTINGS_MODULE=saleor.settings
 
-LABEL org.opencontainers.image.title="saleor/saleor"                                  \
-      org.opencontainers.image.description="\
-A modular, high performance, headless e-commerce platform built with Python, \
-GraphQL, Django, and ReactJS."                                                         \
-      org.opencontainers.image.url="https://saleor.io/"                                \
-      org.opencontainers.image.source="https://github.com/saleor/saleor"               \
-      org.opencontainers.image.authors="Saleor Commerce (https://saleor.io)"           \
+LABEL org.opencontainers.image.title="saleor/saleor" \
+      org.opencontainers.image.description="A modular, high performance, headless e-commerce platform built with Python, GraphQL, Django, and ReactJS." \
+      org.opencontainers.image.url="https://saleor.io/" \
+      org.opencontainers.image.source="https://github.com/saleor/saleor" \
+      org.opencontainers.image.authors="Saleor Commerce (https://saleor.io)" \
       org.opencontainers.image.licenses="BSD 3"
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "--worker-class", "saleor.asgi.gunicorn_worker.UvicornWorker", "saleor.asgi:application"]
+RUN pip install uvicorn[standard] watchfiles
 
-RUN pip install gunicorn uvicorn
+# Install development tools
+RUN pip install \
+    debugpy \
+    django-debug-toolbar \
+    watchfiles \
+    uvicorn[standard] \
+    ipython
+
+# Development specific command
+CMD ["uvicorn", "saleor.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/saleor"]
