@@ -1,6 +1,6 @@
 import os
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
 
 from .jwt_manager import get_jwt_manager
@@ -18,3 +18,7 @@ def home(request):
 
 def jwks(request):
     return JsonResponse(get_jwt_manager().get_jwks())
+
+
+def test_view(request):
+    return HttpResponse("11 Testing auto reload now!")

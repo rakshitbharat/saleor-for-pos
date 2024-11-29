@@ -63,13 +63,16 @@ LABEL org.opencontainers.image.title="saleor/saleor" \
 
 RUN pip install uvicorn[standard] watchfiles
 
-# Install development tools
+# Install development tools with specific versions
 RUN pip install \
-    debugpy \
-    django-debug-toolbar \
-    watchfiles \
-    uvicorn[standard] \
-    ipython
+    watchfiles==0.21.0 \
+    uvicorn[standard]==0.27.1 \
+    python-dotenv==1.0.0 \
+    debugpy==1.8.0 \
+    django-debug-toolbar==4.2.0
 
-# Development specific command
-CMD ["uvicorn", "saleor.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/saleor"]
+# Remove any existing .pyc files and __pycache__ directories
+RUN find /app -type f -name "*.pyc" -delete && \
+    find /app -type d -name "__pycache__" -delete
+
+USER saleor

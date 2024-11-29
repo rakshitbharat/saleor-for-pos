@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.views import serve
-from django.urls import re_path
+from django.urls import re_path, path
 from django.views.decorators.csrf import csrf_exempt
 
-from .core.views import jwks
+from .core.views import jwks, test_view
 from .graphql.api import backend, schema
 from .graphql.views import GraphQLView
 from .plugins.views import (
@@ -51,6 +51,7 @@ urlpatterns = [
         name="thumbnail",
     ),
     re_path(r"^\.well-known/jwks.json$", jwks, name="jwks"),
+    path('test/', test_view, name='test'),
 ]
 
 if settings.DEBUG:

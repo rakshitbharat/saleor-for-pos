@@ -6,7 +6,9 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-    command: uvicorn saleor.asgi:application --host 0.0.0.0 --port 8000 --reload --reload-dir /app/saleor
+    command: >
+      sh -c "watchmedo auto-restart --directory=/app/saleor --pattern='*.py' --recursive --
+             python -m uvicorn saleor.asgi:application --host 0.0.0.0 --port 8000 --reload"
     env_file:
       - common.env
       - backend.env
@@ -17,12 +19,15 @@ services:
       - ..:/app:cached
       - ./data/python:/root/.local/share/python:cached
       - /app/.venv
+      - /app/__pycache__
+      - /app/*.pyc
     environment:
       - DJANGO_DEBUG=1
       - DEBUG_TOOLBAR=1
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
       - DJANGO_SETTINGS_MODULE=saleor.settings
+      - WATCHFILES_FORCE_POLLING=true
     ports:
       - "8000:8000"
       - "5678:5678" # Debug port
