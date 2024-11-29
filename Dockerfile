@@ -11,12 +11,14 @@ WORKDIR /app
 RUN pip install poetry==1.8.4
 RUN poetry config virtualenvs.create false
 
-# Copy the entire project first to ensure all dependencies are available
-COPY . /app/
+# Copy only pyproject.toml and poetry.lock first
+COPY pyproject.toml poetry.lock ./
+
+# Install dependencies
 RUN poetry install --no-root
 
-# Install the saleor package in development mode
-RUN pip install -e .
+# Now copy the rest of the code
+COPY . .
 
 ### Final image
 FROM python:3.12-slim
@@ -45,9 +47,6 @@ COPY --from=build-python /usr/local/lib/python3.12/site-packages/ /usr/local/lib
 COPY --from=build-python /usr/local/bin/ /usr/local/bin/
 COPY --from=build-python /app/ /app/
 WORKDIR /app
-
-# Install the saleor package in development mode in the final image
-RUN pip install -e .
 
 ARG STATIC_URL
 ENV STATIC_URL=${STATIC_URL:-/static/} \
