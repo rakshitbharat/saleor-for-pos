@@ -59,6 +59,7 @@ from .mutations.order_refund import OrderRefund
 from .mutations.order_update import OrderUpdate
 from .mutations.order_update_shipping import OrderUpdateShipping
 from .mutations.order_void import OrderVoid
+from .mutations.orders import OrderDiscountAndTaxUpdate
 from .resolvers import (
     resolve_draft_orders,
     resolve_homepage_events,
@@ -286,3 +287,4 @@ class OrderMutations(graphene.ObjectType):
     order_void = OrderVoid.Field()
     order_bulk_cancel = OrderBulkCancel.Field()
     order_bulk_create = OrderBulkCreate.Field()
+    order_discount_and_tax_update = OrderDiscountAndTaxUpdate.Field()

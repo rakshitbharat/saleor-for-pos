@@ -11,14 +11,11 @@ WORKDIR /app
 RUN pip install poetry==1.8.4
 RUN poetry config virtualenvs.create false
 
-# Copy only pyproject.toml and poetry.lock first
-COPY pyproject.toml poetry.lock ./
-
-# Install dependencies
-RUN poetry install --no-root
-
-# Now copy the rest of the code
+# Copy the entire project first
 COPY . .
+
+# Install project and dependencies
+RUN poetry install
 
 ### Final image
 FROM python:3.12-slim
@@ -48,16 +45,25 @@ COPY --from=build-python /usr/local/bin/ /usr/local/bin/
 COPY --from=build-python /app/ /app/
 WORKDIR /app
 
+# Install poetry and project
+RUN pip install poetry==1.8.4 \
+    && poetry config virtualenvs.create false \
+    && poetry install
+
+# Install development dependencies
+RUN poetry add --group dev \
+    django-debug-toolbar@4.2.0 \
+    watchfiles@0.21.0 \
+    "uvicorn[standard]@>=0.32.0,<0.33.0"
+
 ARG STATIC_URL
 ENV STATIC_URL=${STATIC_URL:-/static/} \
-    PYTHONPATH=/app
-
-# Install runtime dependencies
-RUN pip install uvicorn[standard]==0.27.1
+    PYTHONPATH=/app \
+    SECRET_KEY="development-secret-key-123"
 
 # Collect static files
 USER root
-RUN PYTHONPATH=/app SECRET_KEY=dummy STATIC_URL=${STATIC_URL} python3 manage.py collectstatic --no-input
+RUN cd /app && SECRET_KEY="development-secret-key-123" python3 manage.py collectstatic --no-input
 USER saleor
 
 EXPOSE 8000
