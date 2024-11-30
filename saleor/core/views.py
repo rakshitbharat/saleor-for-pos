@@ -21,4 +21,4 @@ def jwks(request):
 
 
 def test_view(request):
-    return HttpResponse("11 Testing auto reload now!")
+    return HttpResponse("11zzz11 Testing auto reload now!")
